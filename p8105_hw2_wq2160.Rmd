@@ -157,4 +157,25 @@ unemployment_df =
 unemployment_df
 ```
 
+Join the datasets.
 
+```{r}
+pols_snp = 
+  left_join(pols_df, snp_df, by = c("year", "month"))
+pols_snp_unemploy = 
+  left_join(pols_snp, unemployment_df, by = c("year", "month")) %>% 
+  arrange(year, month)
+
+pols_snp_unemploy
+head(pols_snp_unemploy)
+tail(pols_snp_unemploy)
+```
+
+
+**pols-month** data set contains the number of national politicians who are democratic or republican at any given time, such as at a given month and year, whether the president belongs to democratic or republican party, and the number of republican or democratic governors, senators and representatives.
+
+**snp** data set presents Standard & Poor’s stock market index, which shows the closing values of the S&P stock index on the associated date.
+
+**unemployment** data set contains the percentage of unemployment at a given month and year.
+
+**The resulting data set** contains 822 rows and 11 columns, and the year range is from 1947 to 2015, and the names of key variables could be seen by `names(pols_snp_unemploy)`, which contains "year", "month", "president", "gov_gop", "sen_gop", "rep_gop", "gov_dem", "sen_dem", "rep_dem", "close" and "unemployment". Note that the `unemployment` data set range from 1948 to 2015, and the `snp` range from 1950 to 2015.
