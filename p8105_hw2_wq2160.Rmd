@@ -5,7 +5,73 @@ date: "10/8/2021"
 output: github_document
 ---
 
-```{r}
+```{r include = FALSE}
 library(tidyverse)
+library(readxl)
 ```
 
+## Problem 1
+
+Read and clean the Mr. Trash Wheel data set.
+
+```{r}
+trash_wheel = 
+  read_excel("./data_1/Trash-Wheel-Collection-Totals-7-2020-2.xlsx", sheet = 1, range = cell_cols("A:N")) %>% 
+  janitor::clean_names() %>% 
+  drop_na(dumpster) %>% 
+  drop_na(month) %>% 
+  mutate(
+    sports_balls = as.integer(round(sports_balls))
+  )
+
+trash_wheel
+```
+
+Read and clean the precipitation data for 2018.
+
+```{r}
+pre_18 = 
+  read_excel("./data_1/Trash-Wheel-Collection-Totals-7-2020-2.xlsx", sheet = "2018 Precipitation", skip = 1) %>% 
+  janitor::clean_names() %>% 
+  drop_na() %>% 
+  mutate(
+    year = c("2018")
+  )
+
+pre_18
+```
+
+Read and clean the precipitation data for 2019.
+
+```{r}
+pre_19 = 
+  read_excel("./data_1/Trash-Wheel-Collection-Totals-7-2020-2.xlsx", sheet = "2019 Precipitation", skip = 1) %>% 
+  janitor::clean_names() %>% 
+  drop_na() %>% 
+  mutate(
+    year = c("2019")
+  )
+
+pre_19
+```
+
+Combine precipitation data sets of 2018 and 2019.
+
+```{r}
+pre_1819 = 
+  left_join(pre_18, pre_19, by = "month") %>% 
+  mutate(
+    month = month.name[month]
+  ) %>% 
+  relocate(month, year.x, total.x, year.y, total.y)
+
+pre_1819
+```
+
+The **number of observation** in trash wheel dataset is `nrow(trash_wheel)`; in 2018 Precipitation is `nrow(pre_18)`, and in 2019 Precipitation is `nrow(pre_19)`, in combination set of 2018 and 2019 precipitation is `nrow(pre_1819)`.
+
+The **key variables** in trash wheel is `names(trash_wheel)`, in 2018 Precipitation is `names(pre_18)`, in 2019 Precipitation is `names(pre_19)`, and in combination set of 2018 and 2019 precipitation is `names(pre_1819)`.
+
+The **total precipitation** in 2018 is `sum(pull(pre_18, total))`, in 2019 is `sum(pull(pre_19, total))`. And the information get from `pre_1819` is that the precipitation amount in 2019 is much lower than 2018, and this trend is extremely obvious during summer time (from April to September).
+
+The **median number of sports balls** in a dumpster in 2019 is `filter(trash_wheel, year == "2019") %>% pull(sports_balls) %>% median()`.
