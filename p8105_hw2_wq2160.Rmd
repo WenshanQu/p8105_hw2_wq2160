@@ -204,3 +204,28 @@ bbname_df =
   distinct()
 ```
 
+Olivia dataframe
+
+```{r}
+olivia_df = 
+  filter(bbname_df, childs_first_name == "Olivia") %>% 
+  select(year_of_birth, ethnicity, rank) %>% 
+  rename(rank_of_olivia = rank) %>% 
+  arrange(ethnicity, year_of_birth)
+
+olivia_df
+```
+
+Most popular boy name.
+
+```{r}
+pop_male_df = 
+  filter(bbname_df, rank == "1", gender == "male") %>% 
+  select(year_of_birth, ethnicity, childs_first_name) %>% 
+  arrange(ethnicity, year_of_birth) %>% 
+  rename(most_popular_male_baby_name = childs_first_name)
+
+pop_male_df
+```
+
+
