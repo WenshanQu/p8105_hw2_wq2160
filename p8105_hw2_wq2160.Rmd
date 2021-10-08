@@ -75,3 +75,42 @@ The **key variables** in trash wheel is `names(trash_wheel)`, in 2018 Precipitat
 The **total precipitation** in 2018 is `sum(pull(pre_18, total))`, in 2019 is `sum(pull(pre_19, total))`. And the information get from `pre_1819` is that the precipitation amount in 2019 is much lower than 2018, and this trend is extremely obvious during summer time (from April to September).
 
 The **median number of sports balls** in a dumpster in 2019 is `filter(trash_wheel, year == "2019") %>% pull(sports_balls) %>% median()`.
+
+
+## Problem 2
+
+Clean and modify the pols-month data set.
+
+```{r}
+pols_df = 
+  read.csv("./data_2/pols-month.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(mon, into = c("year", "month", "day"), sep = "-") %>% 
+  mutate(
+    year = as.integer(year),
+    month = as.integer(month),
+    day = as.integer(day)
+  ) %>% 
+  mutate(
+    month = month.name[month] ## replace month number with month name 
+  ) %>% 
+  select(- day) %>% 
+  relocate(year, month, prez_gop, prez_dem) %>% 
+  mutate(
+    prez_gop = na_if(prez_gop, 0),
+    prez_dem = na_if(prez_dem, 0)  ## convert value "0" to NA for future manipulation
+  ) %>% 
+  pivot_longer(
+    prez_gop:prez_dem,
+    names_to = "name", 
+    names_prefix = "prez_",
+    values_to = "president"
+  ) %>% 
+  drop_na() %>% ## only remain one row (whether dem or gop) for each month of year
+  select(- president) %>% ## clean the 0 and 1 value because it's meaningless, only reserve the "dem" or "gop" value
+  rename(president = name) %>% ## rename the column containing what we need as president
+  select(year, month, president, everything())
+
+pols_df
+```
+
