@@ -1,0 +1,11 @@
+---
+title: "p8105_hw2_wq2160"
+author: "Wenshan Qu (wq2160)"
+date: "10/8/2021"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+```
+
