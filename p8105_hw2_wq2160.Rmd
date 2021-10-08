@@ -114,3 +114,47 @@ pols_df =
 pols_df
 ```
 
+Clean and modify snp data set.
+
+```{r message = FALSE}
+library(lubridate) ## we use lubridate package to extract the date information
+```
+
+```{r}
+snp_df = 
+  read.csv("./data_2/snp.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    month = month(mdy(date)),
+    year = year(mdy(date)), ## use lubridate functions to extract month and year
+    year = ifelse(year >= 2050, year - 100, year) ## lubridate will recognize two-digit old years (i.e. 50 ~ 68) as 2050 ~2068 instead of 1950 ~ 1968, so we manually correct it.
+  ) %>% 
+  select(year, month, close) %>% 
+  mutate(
+    month = month.name[month]
+  ) %>% 
+  arrange(year, month)
+
+snp_df
+```
+
+Clean and modify unemployment data.
+
+```{r}
+unemployment_df = 
+  read.csv("./data_2/unemployment.csv") %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    jan:dec,
+    names_to = "month",
+    values_to = "unemployment"
+  ) %>% 
+  mutate(
+    month = recode(month, "jan" = 1, "feb" = 2, "mar" = 3, "apr" = 4, "may" = 5, "jun" = 6, "jul" = 7, "aug" = 8, "sep" = 9, "oct" = 10, "nov" = 11, "dec" = 12),
+    month = month.name[month]
+  )
+
+unemployment_df
+```
+
+
